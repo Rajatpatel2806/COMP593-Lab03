@@ -26,10 +26,15 @@ def get_sales_csv(): # Check whether command line parameter provided
 
 # Create the directory to hold the individual order Excel sheets
 def create_orders_dir(sales_csv):
-    # Get directory in which sales data CSV file resides
-    # Determine the name and path of the directory to hold the order data files
-    # Create the order directory if it does not already exist
-    return 
+    sales_dir = os.path.dirname(sales_csv)                         # Get directory in which sales data CSV file resides
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    orders_dir = os.path.join(sales_dir, f"Orders_{today_date}")   # Determine the name and path of the directory to hold the order data files
+    
+    if not os.path.exists(orders_dir):                             # Create the order directory if it does not already exist
+        os.makedirs(orders_dir)
+    
+    return orders_dir
+   
 
 # Split the sales data into individual orders and save to Excel sheets
 def process_sales_data(sales_csv, orders_dir):
@@ -48,5 +53,5 @@ def process_sales_data(sales_csv, orders_dir):
         # Format each colunm
         # close the sheet
 
-if __name__ == '__main__':
+ if __name__ == '__main__':
     main()
