@@ -37,11 +37,21 @@ def create_orders_dir(sales_csv):
    
 
 # Split the sales data into individual orders and save to Excel sheets
-def process_sales_data(sales_csv, orders_dir):
-    # Import the sales data from the CSV file into a DataFrame
-    # Insert a new "TOTAL PRICE" column into the DataFrame
-    # Remove columns from the DataFrame that are not needed
-    # Group the rows in the DataFrame by order ID
+def process_sales_data(sales_csv, orders_dir):                                             # Import the sales data from the CSV file into a DataFrame
+    sales_data = pd.read_csv(sales_csv)
+    sales_data['TOTAL PRICE'] = sales_data['ITEM QUANTITY'] * sales_data['ITEM PRICE']     # Insert a new "TOTAL PRICE" column into the DataFrame
+    
+    order_ids = sales_data['ORDER ID'].unique()                                            # Remove columns from the DataFrame that are not needed
+    
+    for order_id in order_ids:                                                             # Group the rows in the DataFrame by order ID
+        order_data = sales_data[sales_data['ORDER ID'] == order_id]
+        order_data = order_data.sort_values(by='ITEM NUMBER')
+        
+        total_price = order_data['TOTAL PRICE'].sum()
+        total_row = pd.DataFrame([['', '', '', '', '', 'Total', total_price]], columns=order_data.columns)
+        order_data = pd.concat([order_data, total_row], ignore_index=True)
+        
+
     # For each order ID:
         # Remove the "ORDER ID" column
         # Sort the items by item number
@@ -53,5 +63,7 @@ def process_sales_data(sales_csv, orders_dir):
         # Format each colunm
         # close the sheet
 
- if __name__ == '__main__':
+
+
+if __name__ == '__main__':
     main()
