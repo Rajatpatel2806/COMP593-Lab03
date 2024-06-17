@@ -50,7 +50,7 @@ def process_sales_data(sales_csv, orders_dir):                                  
         total_price = order_data['TOTAL PRICE'].sum()
         total_row = pd.DataFrame([['', '', '', '', '', 'Total', total_price]], columns=order_data.columns)
         order_data = pd.concat([order_data, total_row], ignore_index=True)
-        
+        save_order_to_excel(order_data, orders_dir, order_id)
 
     # For each order ID:
         # Remove the "ORDER ID" column
@@ -62,6 +62,20 @@ def process_sales_data(sales_csv, orders_dir):                                  
         # Define format for the money columns
         # Format each colunm
         # close the sheet
+
+
+def save_order_to_excel(order_data, orders_dir, order_id):
+    order_filename = os.path.join(orders_dir, f"Order_{order_id}.xlsx")
+    writer = pd.ExcelWriter(order_filename, engine='xlsxwriter')
+    
+    order_data.to_excel(writer, index=False, sheet_name=f"Order_{order_id}")
+    workbook = writer.book
+    worksheet = writer.sheets[f"Order_{order_id}"]
+    
+    money_format = workbook.add_format({'num_format': '$#,##0.00'})
+    worksheet.set_column('G:G', None, money_format)
+    
+    writer.save()
 
 
 
